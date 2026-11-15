@@ -35,8 +35,10 @@ def fetch_forecast():
         f"hourly=temperature_2m&temperature_unit=fahrenheit&"
         f"timezone={TIMEZONE}"
     )
-    response = requests.get(url)
+    print(f"📡 Requesting weather data from Open-Meteo...")
+    response = requests.get(url, timeout=15)
     response.raise_for_status()
+    data = response.json()
 
     if DEBUG_MODE: 
         print("\n" + "="*50)
@@ -65,7 +67,7 @@ def fetch_forecast():
             print("⚠️ No 'hourly' block found in API response!")
         print("="*50 + "\n")
     
-    return response.json()
+    return data
 
 def check_freezing_tomorrow(data):
     hourly = data["hourly"]
@@ -73,6 +75,7 @@ def check_freezing_tomorrow(data):
     temps = hourly["temperature_2m"]
     
     tomorrow_str = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    print(f"📅 Looking for freezing temperatures on target date: {tomorrow_str}")
     
     freezing_hours = []
     for t_str, temp in zip(times, temps):
