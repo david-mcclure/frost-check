@@ -58,8 +58,8 @@ def fetch_forecast():
                 print(f"• Data range start: {times[0]} ({temps[0]}°F)")
                 print(f"• Data range end  : {times[-1]} ({temps[-1]}°F)")
     
-                print("\n• First 5 raw data points returned:")
-                for i in range(min(5, len(times))):
+                print("\n• Print all raw data points:")
+                for i in range(len(times)):
                     print(f"  [{i}] {times[i]} -> {temps[i]}°F")
             else:
                 print("⚠️ Hourly arrays are empty!")
