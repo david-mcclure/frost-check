@@ -16,6 +16,11 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECIPIENT_SMS = os.getenv("RECIPIENT_SMS")  # e.g., 1234567890@vtext.com
 
+if os.getenv("DEBUG_MODE"): #If true, sets "freezing" to 200 degrees to ensure text message sent
+    FREEZING_TEMP_F = 200.0
+else:
+    FREEZING_TEMP_F = 32.0
+
 def fetch_forecast():
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
@@ -38,7 +43,7 @@ def check_freezing_tomorrow(data):
     for t_str, temp in zip(times, temps):
         dt = datetime.fromisoformat(t_str)
         if dt.strftime("%Y-%m-%d") == tomorrow_str:
-            if temp <= 32.0:
+            if temp <= FREEZING_TEMP_F:
                 freezing_hours.append((dt.strftime("%H:%M"), temp))
                 
     return freezing_hours
