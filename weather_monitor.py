@@ -58,8 +58,8 @@ def check_freezing_tomorrow(data):
 def send_pushover_notification(message):
     url = "https://api.pushover.net/1/messages.json"
     data = {
-        "token": "PUSHOVER_APP_API_TOKEN",  # Load from GitHub Secrets
-        "user": "PUSHOVER_USER_KEY", # Load from GitHub Secrets
+        "token": PUSHOVER_APP_API_TOKEN,  # Load from GitHub Secrets
+        "user": PUSHOVER_USER_KEY, # Load from GitHub Secrets
         "message": message,
         "title": "Freeze Alert ❄️"
     }
