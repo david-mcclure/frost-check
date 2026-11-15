@@ -15,8 +15,9 @@ SMTP_PORT = 465
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECIPIENT_SMS = os.getenv("RECIPIENT_SMS")  # e.g., 1234567890@vtext.com
+DEBUG_MODE = os.getenv("DEBUG_MODE").lower() == "true"
 
-if os.getenv("DEBUG_MODE"): #If true, sets "freezing" to 200 degrees to ensure text message sent
+if DEBUG_MODE: #If true, sets "freezing" to 200 degrees to ensure text message sent
     FREEZING_TEMP_F = 200.0
 else:
     FREEZING_TEMP_F = 32.0
