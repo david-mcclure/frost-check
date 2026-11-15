@@ -15,6 +15,12 @@ SMTP_PORT = 465
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECIPIENT_SMS = os.getenv("RECIPIENT_SMS")  # e.g., 1234567890@vtext.com
+
+# Pushover credentials
+PUSHOVER_APP_API_TOKEN = os.getenv("PUSHOVER_APP_API_TOKEN")
+PUSHOVER_USER_KEY = os.getenv("PUSHOVER_USER_KEY")
+
+# Debug mode setting
 DEBUG_MODE = os.getenv("DEBUG_MODE").lower() == "true"
 
 if DEBUG_MODE: #If true, sets "freezing" to 200 degrees to ensure text message sent
@@ -49,6 +55,17 @@ def check_freezing_tomorrow(data):
                 
     return freezing_hours
 
+def send_pushover_notification(message):
+    url = "https://api.pushover.net/1/messages.json"
+    data = {
+        "token": "PUSHOVER_APP_API_TOKEN",  # Load from GitHub Secrets
+        "user": "PUSHOVER_USER_KEY", # Load from GitHub Secrets
+        "message": message,
+        "title": "Freeze Alert ❄️"
+    }
+    response = requests.post(url, data=data)
+    response.raise_for_status()
+
 def send_sms(message):
     if not RECIPIENT_SMS:
         raise ValueError("RECIPIENT_SMS environment variable is not set.")
@@ -75,7 +92,7 @@ def main():
                 f"❄️ Freezing Alert: Temps tomorrow drop below freezing! "
                 f"Low: {min_temp}°F, starting around {first_time}."
             )
-            send_sms(msg)
+            send_pushover_notification(msg)
         else:
             print("No freezing temperatures forecasted for tomorrow.")
             
