@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 14 * * *' # Runs daily at 14:00 UTC (7:00 AM MST)
   workflow_dispatch:
+    inputs:
+        debug_mode:
+          description: 'Force text alert (Debug Mode)'
+          required: false
+          type: boolean
+          default: false
 
 jobs:
   run-script:
@@ -25,4 +31,5 @@ jobs:
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
           SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
           RECIPIENT_SMS: ${{ secrets.RECIPIENT_SMS }}
+          DEBUG_MODE: ${{ inputs.debug_mode }}
         run: python weather_monitor.py
