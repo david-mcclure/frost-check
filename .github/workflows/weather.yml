@@ -10,17 +10,17 @@ on:
   workflow_dispatch:
     inputs:
         run_now:
-          description: 'Forces script to run now (Debugging Tool)'
+          description: 'Debug Tool: Forces script to run now by ignoring Dynamic Timezone Alignment'
           required: false
           type: boolean
           default: false
         force_text:
-          description: 'Force text alert (Debug Tool)'
+          description: 'Debug Tool: Forces a text alert even if no freezing'
           required: false
           type: boolean
           default: false
         override_freezing_temp:
-          description: 'Override freezing temp from 32 (Debugging Tool)'
+          description: 'Debug Tool: Override freezing temp from 32'
           required: false
           type: string
           default: ""
@@ -38,7 +38,7 @@ jobs:
         env:
           RUN_NOW: ${{ inputs.run_now }}
         run: |
-          # 1. Check if Debug Mode is enabled first
+          # 1. Check if RUN_NOW is enabled first
           if [ "$RUN_NOW" = "true" ]; then
             echo "⚠️ RUN_NOW is set to true. Bypassing timezone alignment and proceeding immediately."
             exit 0
