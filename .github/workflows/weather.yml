@@ -6,7 +6,7 @@ on:
     # This corresponds to:
     # - Summer (MDT): 8:00 PM and 8:00 AM (Runs instantly)
     # - Winter (MST): 7:00 PM and 7:00 AM (Dynamic Timezone Alignment forces sleep for 1 hour to align to 8:00)
-    - cron: '0 2,14 * * *'
+    - cron: '17 2,14 * * *'
   workflow_dispatch:
     inputs:
         run_now:
