@@ -2,7 +2,11 @@ name: Daily Weather Text Alert
 
 on:
   schedule:
-    - cron: '0 2 * * *' # Runs daily at 2:00 UTC (which is 8 PM MDT / 7 PM MST)
+    # Trigger every day at 02:00 UTC and 14:00 UTC.
+    # This corresponds to:
+    # - Summer (MDT): 8:00 PM and 8:00 AM (Runs instantly)
+    # - Winter (MST): 7:00 PM and 7:00 AM (Dynamic Timezone Alignment forces sleep for 1 hour to align to 8:00)
+    - cron: '0 2,14 * * *'
   workflow_dispatch:
     inputs:
         debug_mode:
