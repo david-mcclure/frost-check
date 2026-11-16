@@ -3,6 +3,7 @@ import smtplib
 from email.message import EmailMessage
 import requests
 from datetime import datetime, timedelta
+import time
 
 # Configuration
 LATITUDE = 39.7894
