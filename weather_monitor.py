@@ -3,6 +3,14 @@ import requests
 from datetime import datetime, timedelta
 import time
 import zoneinfo
+import socket
+import urllib3.util.connection as urllib_conn
+
+def allowed_gai_family():
+    """Forces all outbound requests to bypass IPv6 and use IPv4 only."""
+    return socket.AF_INET
+
+urllib_conn.allowed_gai_family = allowed_gai_family
 
 # Configuration
 LATITUDE = 39.7894
