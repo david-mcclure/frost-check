@@ -4,6 +4,7 @@ from email.message import EmailMessage
 import requests
 from datetime import datetime, timedelta
 import time
+import zoneinfo
 
 # Configuration
 LATITUDE = 39.7894
