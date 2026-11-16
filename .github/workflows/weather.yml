@@ -14,6 +14,11 @@ on:
           required: false
           type: boolean
           default: false
+        run_now:
+          description: 'Forces run now (Debugging Tool)'
+          required: false
+          type: boolean
+          default: false
 
 jobs:
   run-script:
@@ -27,9 +32,10 @@ jobs:
       - name: Dynamic Timezone Alignment
         env:
           DEBUG_MODE: ${{ inputs.debug_mode }}
+          RUN_NOW: ${{ inputs.run_now }}
         run: |
           # 1. Check if Debug Mode is enabled first
-          if [ "$DEBUG_MODE" = "true" ]; then
+          if [[ "$DEBUG_MODE" = "true" || "$RUN_NOW" = "true" ]]; then
             echo "⚠️ Debug Mode is active. Bypassing timezone alignment and proceeding immediately."
             exit 0
           fi
