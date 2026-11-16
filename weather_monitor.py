@@ -114,41 +114,37 @@ def send_pushover_notification(message):
     response.raise_for_status()
 
 def main():
-    try:
-        data = fetch_forecast()
-        freezing_events = check_freezing_window(data)
+    data = fetch_forecast()
+    freezing_events = check_freezing_window(data)
+    
+    if freezing_events:
+        min_temp = min(t[1] for t in freezing_events)
         
-        if freezing_events:
-            min_temp = min(t[1] for t in freezing_events)
-            
-            # Start time = first hour freezing occurs
-            start_dt = freezing_events[0][0]
-            start_time_str = start_dt.strftime("%I:%M %p")
-            
-            # End time = last hour freezing occurs
-            end_dt = freezing_events[-1][0]
-            end_time_str = end_dt.strftime("%I:%M %p")
-            
-            if start_time_str == end_time_str:
-                msg = (
-                    f"❄️ Freeze Alert: Dips below freezing at {start_time_str}! "
-                    f"Expected low: {min_temp}°F."
-                )
-            else:
-                msg = (
-                    f"❄️ Freeze Alert: Freeze expected between {start_time_str} and {end_time_str}! "
-                    f"Expected low: {min_temp}°F."
-                )
-                
-            print(f"Sending notification: {msg}")
-            send_pushover_notification(msg)
-            print("Notification sent successfully!")
+        # Start time = first hour freezing occurs
+        start_dt = freezing_events[0][0]
+        start_time_str = start_dt.strftime("%I:%M %p")
+        
+        # End time = last hour freezing occurs
+        end_dt = freezing_events[-1][0]
+        end_time_str = end_dt.strftime("%I:%M %p")
+        
+        if start_time_str == end_time_str:
+            msg = (
+                f"❄️ Freeze Alert: Dips below freezing at {start_time_str}! "
+                f"Expected low: {min_temp}°F."
+            )
         else:
-            print(f"No freezing temperatures (<= {FREEZING_TEMP_F}°F) forecasted for the next 12 hours.")
+            msg = (
+                f"❄️ Freeze Alert: Freeze expected between {start_time_str} and {end_time_str}! "
+                f"Expected low: {min_temp}°F."
+            )
             
-    except Exception as e:
-        print(f"Error checking weather forecast: {e}")
-        raise e
+        print(f"Sending notification: {msg}")
+        send_pushover_notification(msg)
+        print("Notification sent successfully!")
+    else:
+        print(f"No freezing temperatures (<= {FREEZING_TEMP_F}°F) forecasted for the next 12 hours.")
+            
 
 if __name__ == "__main__":
     main()
