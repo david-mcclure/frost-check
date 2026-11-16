@@ -9,16 +9,21 @@ on:
     - cron: '0 2,14 * * *'
   workflow_dispatch:
     inputs:
-        debug_mode:
-          description: 'Force text alert (Debug Mode)'
-          required: false
-          type: boolean
-          default: false
         run_now:
-          description: 'Forces run now (Debugging Tool)'
+          description: 'Forces script to run now (Debugging Tool)'
           required: false
           type: boolean
           default: false
+        force_text:
+          description: 'Force text alert (Debug Tool)'
+          required: false
+          type: boolean
+          default: false
+        override_freezing_temp:
+          description: 'Override freezing temp from 32 (Debugging Tool)'
+          required: false
+          type: string
+          default: ""
 
 jobs:
   run-script:
@@ -31,12 +36,11 @@ jobs:
       # If it is MST, we pause (sleep) for 1 hour so the script runs at 8 PM local time
       - name: Dynamic Timezone Alignment
         env:
-          DEBUG_MODE: ${{ inputs.debug_mode }}
           RUN_NOW: ${{ inputs.run_now }}
         run: |
           # 1. Check if Debug Mode is enabled first
-          if [[ "$DEBUG_MODE" = "true" || "$RUN_NOW" = "true" ]]; then
-            echo "⚠️ Debug Mode is active. Bypassing timezone alignment and proceeding immediately."
+          if [ "$RUN_NOW" = "true" ]; then
+            echo "⚠️ RUN_NOW is set to true. Bypassing timezone alignment and proceeding immediately."
             exit 0
           fi
 
@@ -62,5 +66,6 @@ jobs:
         env:
           PUSHOVER_APP_API_TOKEN: ${{ secrets.PUSHOVER_APP_API_TOKEN }}
           PUSHOVER_USER_KEY: ${{ secrets.PUSHOVER_USER_KEY }}
-          DEBUG_MODE: ${{ inputs.debug_mode }}
+          FORCE_TEXT: ${{ inputs.force_text }}
+          OVERRIDE_FREEZING_TEMP: ${{ inputs.override_freezing_temp }}
         run: python weather_monitor.py
