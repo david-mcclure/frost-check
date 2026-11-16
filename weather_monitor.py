@@ -72,32 +72,32 @@ def fetch_forecast(max_retries=4, base_timeout=15):
                 print("❌ All retry attempts exhausted.")
                 raise e
 
-    if DEBUG_MODE: 
-        print("\n" + "="*50)
-        print("🔍 METEO API DIAGNOSTICS")
-        print("="*50)
-        print(f"• Request URL: {url}")
-        print(f"• Configured Script Timezone: {TIMEZONE}")
-        print(f"• API Returned Timezone: {data.get('timezone')} ({data.get('timezone_abbreviation')})")
-        print(f"• Elevation: {data.get('elevation')}m")
     
-        if "hourly" in data:
-            times = data["hourly"].get("time", [])
-            temps = data["hourly"].get("temperature_2m", [])
-            print(f"• Total hourly data points returned: {len(times)}")
-    
-            if len(times) > 0:
-                print(f"• Data range start: {times[0]} ({temps[0]}°F)")
-                print(f"• Data range end  : {times[-1]} ({temps[-1]}°F)")
-    
-                print("\n• Print all raw data points:")
-                for i in range(len(times)):
-                    print(f"  [{i}] {times[i]} -> {temps[i]}°F")
-            else:
-                print("⚠️ Hourly arrays are empty!")
+    print("\n" + "="*50)
+    print("🔍 METEO API DIAGNOSTICS")
+    print("="*50)
+    print(f"• Request URL: {url}")
+    print(f"• Configured Script Timezone: {TIMEZONE}")
+    print(f"• API Returned Timezone: {data.get('timezone')} ({data.get('timezone_abbreviation')})")
+    print(f"• Elevation: {data.get('elevation')}m")
+
+    if "hourly" in data:
+        times = data["hourly"].get("time", [])
+        temps = data["hourly"].get("temperature_2m", [])
+        print(f"• Total hourly data points returned: {len(times)}")
+
+        if len(times) > 0:
+            print(f"• Data range start: {times[0]} ({temps[0]}°F)")
+            print(f"• Data range end  : {times[-1]} ({temps[-1]}°F)")
+
+            print("\n• Print all raw data points:")
+            for i in range(len(times)):
+                print(f"  [{i}] {times[i]} -> {temps[i]}°F")
         else:
-            print("⚠️ No 'hourly' block found in API response!")
-        print("="*50 + "\n")
+            print("⚠️ Hourly arrays are empty!")
+    else:
+        print("⚠️ No 'hourly' block found in API response!")
+    print("="*50 + "\n")
     
     return data
 
