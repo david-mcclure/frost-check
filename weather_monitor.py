@@ -133,26 +133,22 @@ def send_notification(message):
     response.raise_for_status()
 
 def main():
-    try:
-        data = fetch_forecast()
-        freezing_events = check_freezing_temperatures(data)
-        
-        if freezing_events:
-            min_temp = min(t[1] for t in freezing_events)
-            first_time = freezing_events[0][0]
-            n_hours = len(freezing_events)
-            msg = (
-                f"❄️ Freezing Alert: Temps tomorrow drop below freezing! "
-                f"Low: {min_temp}°F, starting around {first_time} and lasting {n_hours} hour(s)."
-            )
-            send_notification(msg)
-        elif FORCE_TEXT:
-            send_notification('No freezing temperature found, but still sending notification because FORCE_TEXT = true')
-        else:
-            print("No freezing temperatures forecasted for tomorrow.")
-            
-    except Exception as e:
-        print(f"Error checking weather forecast: {e}")
+    data = fetch_forecast()
+    freezing_events = check_freezing_temperatures(data)
+    
+    if freezing_events:
+        min_temp = min(t[1] for t in freezing_events)
+        first_time = freezing_events[0][0]
+        n_hours = len(freezing_events)
+        msg = (
+            f"❄️ Freezing Alert: Temps tomorrow drop below freezing! "
+            f"Low: {min_temp}°F, starting around {first_time} and lasting {n_hours} hour(s)."
+        )
+        send_notification(msg)
+    elif FORCE_TEXT:
+        send_notification('No freezing temperature found, but still sending notification because FORCE_TEXT = true')
+    else:
+        print("No freezing temperatures forecasted for tomorrow.")
 
 if __name__ == "__main__":
     main()
