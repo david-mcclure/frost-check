@@ -147,7 +147,7 @@ def main():
             )
             send_notification(msg)
         elif FORCE_TEXT:
-            send_notification('Testing notification message')
+            send_notification('No freezing temperature found, but still sending notification because FORCE_TEXT = true')
         else:
             print("No freezing temperatures forecasted for tomorrow.")
             
