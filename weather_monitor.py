@@ -154,9 +154,10 @@ def main():
         if freezing_events:
             min_temp = min(t[1] for t in freezing_events)
             first_time = freezing_events[0][0]
+            n_hours = len(freezing_events)
             msg = (
                 f"❄️ Freezing Alert: Temps tomorrow drop below freezing! "
-                f"Low: {min_temp}°F, starting around {first_time}."
+                f"Low: {min_temp}°F, starting around {first_time} and lasting {n_hours} hour(s)."
             )
             send_pushover_notification(msg)
         else:
