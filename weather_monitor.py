@@ -29,9 +29,9 @@ def get_query_window():
     # Current hour today
     start_hour = now_denver.strftime("%Y-%m-%dT%H:00")
 
-    # Noon tomorrow
-    tomorrow = now_denver + timedelta(days=1)
-    end_hour = tomorrow.strftime("%Y-%m-%dT12:00")
+    # End: Exactly 12 hours into the future
+    future_time = now_denver + timedelta(hours=12)
+    end_hour = future_time.strftime("%Y-%m-%dT%H:00")
 
     return start_hour, end_hour
 
@@ -101,35 +101,16 @@ def fetch_forecast(max_retries=4, base_timeout=15):
     
     return data
 
-def get_tomorrow_denver_date():
-    """
-    Calculates tomorrow's date adjusted precisely for America/Denver timezone,
-    bypassing the GitHub runner's native UTC clock bias.
-    """
-    # Get current UTC time
-    utc_now = datetime.utcnow()
-    # Denver is UTC-7 (Standard) or UTC-6 (Daylight).
-    # To safely get Denver's current local time, subtract 7 hours.
-    denver_now = utc_now - timedelta(hours=7)
-
-    # Calculate tomorrow relative to Denver's local today
-    tomorrow_denver = denver_now + timedelta(days=1)
-    return tomorrow_denver.strftime("%Y-%m-%d")
-
-def check_freezing_tomorrow(data):
+def check_freezing_temperatures(data):
     hourly = data["hourly"]
     times = hourly["time"]
     temps = hourly["temperature_2m"]
     
-    tomorrow_str = get_tomorrow_denver_date()
-    print(f"📅 Looking for freezing temperatures on target date: {tomorrow_str}")
-    
     freezing_hours = []
     for t_str, temp in zip(times, temps):
         dt = datetime.fromisoformat(t_str)
-        if dt.strftime("%Y-%m-%d") == tomorrow_str:
-            if temp <= FREEZING_TEMP_F:
-                freezing_hours.append((dt.strftime("%H:%M"), temp))
+        if temp <= FREEZING_TEMP_F:
+            freezing_hours.append((dt.strftime("%H:%M"), temp))
                 
     return freezing_hours
 
@@ -147,7 +128,7 @@ def send_pushover_notification(message):
 def main():
     try:
         data = fetch_forecast()
-        freezing_events = check_freezing_tomorrow(data)
+        freezing_events = check_freezing_temperatures(data)
         
         if freezing_events:
             min_temp = min(t[1] for t in freezing_events)
