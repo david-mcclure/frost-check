@@ -14,12 +14,19 @@ PUSHOVER_APP_API_TOKEN = os.getenv("PUSHOVER_APP_API_TOKEN")
 PUSHOVER_USER_KEY = os.getenv("PUSHOVER_USER_KEY")
 
 # Debug mode setting
-DEBUG_MODE = os.getenv("DEBUG_MODE").lower() == "true"
+FORCE_TEXT = os.getenv("FORCE_TEXT").lower() == "true"
 
-if DEBUG_MODE: #If true, sets "freezing" to 200 degrees to ensure text message sent
-    FREEZING_TEMP_F = 200.0
+# --- DETERMINE FREEZING TEMPERATURE ---
+# Check if a custom override temperature is passed from the YAML environment
+OVERRIDE_FREEZING_TEMP = os.getenv("OVERRIDE_FREEZING_TEMP")
+
+if OVERRIDE_FREEZING_TEMP is not None and OVERRIDE_FREEZING_TEMP.strip() != "":
+    FREEZING_TEMP_F = float(OVERRIDE_FREEZING_TEMP)
+    print(f"🔧 Using custom freezing temperature override from YAML: {FREEZING_TEMP_F}°F")
 else:
+    # Fallback to standard default/debug logic if no custom override exists
     FREEZING_TEMP_F = 32.0
+    
 
 def get_query_window():
     """Returns (start_hour, end_hour) strings formatted for Open-Meteo."""
@@ -114,7 +121,7 @@ def check_freezing_temperatures(data):
                 
     return freezing_hours
 
-def send_pushover_notification(message):
+def send_notification(message):
     url = "https://api.pushover.net/1/messages.json"
     data = {
         "token": PUSHOVER_APP_API_TOKEN,  # Load from GitHub Secrets
@@ -138,7 +145,9 @@ def main():
                 f"❄️ Freezing Alert: Temps tomorrow drop below freezing! "
                 f"Low: {min_temp}°F, starting around {first_time} and lasting {n_hours} hour(s)."
             )
-            send_pushover_notification(msg)
+            send_notification(msg)
+        elif FORCE_TEXT:
+            send_notification('Testing notification message')
         else:
             print("No freezing temperatures forecasted for tomorrow.")
             
