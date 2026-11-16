@@ -34,7 +34,7 @@ def fetch_forecast(max_retries=4, base_timeout=15):
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={LATITUDE}&longitude={LONGITUDE}&"
         f"hourly=temperature_2m&temperature_unit=fahrenheit&"
-        f"timezone={TIMEZONE}"
+        f"timezone={TIMEZONE}&forecast_days=2"
     )
 
     print(f"📡 Requesting weather data from Open-Meteo...")
