@@ -2,7 +2,7 @@ name: Daily Weather Text Alert
 
 on:
   schedule:
-    - cron: '0 14 * * *' # Runs daily at 14:00 UTC (7:00 AM MST)
+    - cron: '0 2 * * *' # Runs daily at 2:00 UTC (which is 8 PM MDT / 7 PM MST)
   workflow_dispatch:
     inputs:
         debug_mode:
@@ -17,6 +17,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Calculate if the runner is currently on MST (UTC-7) or MDT (UTC-6)
+      # If it is MST, we pause (sleep) for 1 hour so the script runs at 8 PM local time
+      - name: Dynamic Timezone Alignment
+        run: |
+          # Get current UTC offset for America/Denver on today's date
+          OFFSET=$(TZ="America/Denver" date +%z)
+
+          if [ "$OFFSET" = "-0700" ]; then
+            echo "Currently in MST (UTC-7). Sleeping 1 hour to align to 8:00 PM..."
+            sleep 3600
+          else
+            echo "Currently in MDT (UTC-6). Proceeding immediately."
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
