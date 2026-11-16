@@ -5,8 +5,8 @@ import requests
 from datetime import datetime, timedelta
 
 # Configuration
-LATITUDE = 39.789481347900114
-LONGITUDE = -104.88420271385169
+LATITUDE = 39.7894
+LONGITUDE = -104.8842
 TIMEZONE = "America/Denver"
 
 # Credentials loaded securely from environment variables
