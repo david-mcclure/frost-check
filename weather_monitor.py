@@ -48,6 +48,7 @@ def fetch_forecast(max_retries=4, base_timeout=15):
             response.raise_for_status()
             data = response.json()
             print("✅ Successfully retrieved forecast data.")
+            break
     
 
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
