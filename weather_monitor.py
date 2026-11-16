@@ -1,6 +1,4 @@
 import os
-import smtplib
-from email.message import EmailMessage
 import requests
 from datetime import datetime, timedelta
 import time
@@ -10,13 +8,6 @@ import zoneinfo
 LATITUDE = 39.7894
 LONGITUDE = -104.8842
 TIMEZONE = "America/Denver"
-
-# Credentials loaded securely from environment variables
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 465
-SENDER_EMAIL = os.getenv("SENDER_EMAIL")
-SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
-RECIPIENT_SMS = os.getenv("RECIPIENT_SMS")  # e.g., 1234567890@vtext.com
 
 # Pushover credentials
 PUSHOVER_APP_API_TOKEN = os.getenv("PUSHOVER_APP_API_TOKEN")
@@ -152,20 +143,6 @@ def send_pushover_notification(message):
     }
     response = requests.post(url, data=data)
     response.raise_for_status()
-
-def send_sms(message):
-    if not RECIPIENT_SMS:
-        raise ValueError("RECIPIENT_SMS environment variable is not set.")
-        
-    msg = EmailMessage()
-    msg.set_content(message)
-    msg["Subject"] = "Freeze Alert"
-    msg["From"] = SENDER_EMAIL
-    msg["To"] = RECIPIENT_SMS
-    
-    with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
-        server.login(SENDER_EMAIL, SENDER_PASSWORD)
-        server.send_message(msg)
 
 def main():
     try:
