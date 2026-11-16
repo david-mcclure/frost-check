@@ -69,12 +69,27 @@ def fetch_forecast():
     
     return data
 
+def get_tomorrow_denver_date():
+    """
+    Calculates tomorrow's date adjusted precisely for America/Denver timezone,
+    bypassing the GitHub runner's native UTC clock bias.
+    """
+    # Get current UTC time
+    utc_now = datetime.utcnow()
+    # Denver is UTC-7 (Standard) or UTC-6 (Daylight).
+    # To safely get Denver's current local time, subtract 7 hours.
+    denver_now = utc_now - timedelta(hours=7)
+
+    # Calculate tomorrow relative to Denver's local today
+    tomorrow_denver = denver_now + timedelta(days=1)
+    return tomorrow_denver.strftime("%Y-%m-%d")
+
 def check_freezing_tomorrow(data):
     hourly = data["hourly"]
     times = hourly["time"]
     temps = hourly["temperature_2m"]
     
-    tomorrow_str = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    tomorrow_str = get_tomorrow_denver_date()
     print(f"📅 Looking for freezing temperatures on target date: {tomorrow_str}")
     
     freezing_hours = []
