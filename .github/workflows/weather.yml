@@ -21,8 +21,16 @@ jobs:
       # Calculate if the runner is currently on MST (UTC-7) or MDT (UTC-6)
       # If it is MST, we pause (sleep) for 1 hour so the script runs at 8 PM local time
       - name: Dynamic Timezone Alignment
+        env:
+          DEBUG_MODE: ${{ inputs.debug_mode }}
         run: |
-          # Get current UTC offset for America/Denver on today's date
+          # 1. Check if Debug Mode is enabled first
+          if [ "$DEBUG_MODE" = "true" ]; then
+            echo "⚠️ Debug Mode is active. Bypassing timezone alignment and proceeding immediately."
+            exit 0
+          fi
+
+          # 2. Get current UTC offset for America/Denver on today's date
           OFFSET=$(TZ="America/Denver" date +%z)
 
           if [ "$OFFSET" = "-0700" ]; then
@@ -31,7 +39,7 @@ jobs:
           else
             echo "Currently in MDT (UTC-6). Proceeding immediately."
           fi
-
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
