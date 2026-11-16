@@ -28,17 +28,36 @@ if DEBUG_MODE: #If true, sets "freezing" to 200 degrees to ensure text message s
 else:
     FREEZING_TEMP_F = 32.0
 
-def fetch_forecast():
+def fetch_forecast(max_retries=4, base_timeout=15):
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={LATITUDE}&longitude={LONGITUDE}&"
         f"hourly=temperature_2m&temperature_unit=fahrenheit&"
         f"timezone={TIMEZONE}"
     )
+
     print(f"📡 Requesting weather data from Open-Meteo...")
-    response = requests.get(url, timeout=15)
-    response.raise_for_status()
-    data = response.json()
+    for attempt in range(1, max_retries + 1):
+        # Slightly scale timeout with each attempt
+        current_timeout = base_timeout + (attempt - 1) * 5
+        print(f"📡 Requesting weather data from Open-Meteo (Attempt {attempt}/{max_retries}, timeout={current_timeout}s)...")
+
+        try:
+            response = requests.get(url, timeout=current_timeout)
+            response.raise_for_status()
+            data = response.json()
+            print("✅ Successfully retrieved forecast data.")
+    
+
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+            print(f"⚠️ Attempt {attempt} failed: {e}")
+            if attempt < max_retries:
+                sleep_seconds = 2 ** attempt  # 2s, 4s, 8s backoff
+                print(f"⏳ Waiting {sleep_seconds} seconds before retrying...")
+                time.sleep(sleep_seconds)
+            else:
+                print("❌ All retry attempts exhausted.")
+                raise e
 
     if DEBUG_MODE: 
         print("\n" + "="*50)
