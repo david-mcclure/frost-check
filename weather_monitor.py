@@ -29,14 +29,33 @@ if DEBUG_MODE: #If true, sets "freezing" to 200 degrees to ensure text message s
 else:
     FREEZING_TEMP_F = 32.0
 
+def get_query_window():
+    """Returns (start_hour, end_hour) strings formatted for Open-Meteo."""
+    denver_tz = zoneinfo.ZoneInfo(TIMEZONE)
+    now_denver = datetime.now(denver_tz)
+
+    # Current hour today
+    start_hour = now_denver.strftime("%Y-%m-%dT%H:00")
+
+    # Noon tomorrow
+    tomorrow = now_denver + timedelta(days=1)
+    end_hour = tomorrow.strftime("%Y-%m-%dT12:00")
+
+    return start_hour, end_hour
+
 def fetch_forecast(max_retries=4, base_timeout=15):
+    start_hour, end_hour = get_query_window()
+    print(f"🕒 Requesting forecast window: {start_hour} to {end_hour}")
+
+    # Query ONLY from current hour to tomorrow at noon
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={LATITUDE}&longitude={LONGITUDE}&"
         f"hourly=temperature_2m&temperature_unit=fahrenheit&"
-        f"timezone={TIMEZONE}&forecast_days=2"
+        f"timezone={TIMEZONE}&"
+        f"start_hour={start_hour}&end_hour={end_hour}"
     )
-
+    
     print(f"📡 Requesting weather data from Open-Meteo...")
     for attempt in range(1, max_retries + 1):
         # Slightly scale timeout with each attempt
