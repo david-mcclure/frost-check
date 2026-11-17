@@ -56,7 +56,7 @@ def fetch_forecast(max_retries=4, base_timeout=15):
 
     # Query ONLY from current hour to tomorrow at noon
     url = (
-        f"https://api.open-meteo.com/v1/forecast?"
+        f"http://api.open-meteo.com/v1/forecast?"
         f"latitude={LATITUDE}&longitude={LONGITUDE}&"
         f"hourly=temperature_2m&temperature_unit=fahrenheit&"
         f"timezone={TIMEZONE}&"
