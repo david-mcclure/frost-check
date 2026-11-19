@@ -1,11 +1,6 @@
 name: Daily Weather Text Alert
 
 on:
-  schedule:
-    # Runs at 8:17 AM and 8:17 PM America/Denver year-round (auto-adjusts for MST/MDT).
-    # Using minute 17 (no leading zero) avoids top-of-the-hour GitHub queue drops.
-    - cron: '17 8,20 * * *'
-      timezone: 'America/Denver'
   workflow_dispatch:
     inputs:
       force_text:
